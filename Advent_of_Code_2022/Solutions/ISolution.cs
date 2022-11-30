@@ -1,8 +1,8 @@
-﻿namespace Advent_of_Code_2022;
+﻿namespace Advent_of_Code_2022.Solutions;
 
-public interface IDay
+public interface ISolution
 {
-    public void PrintSolution1();
+    public string GetFirstAnswer();
         
-    public void PrintSolution2();
+    public string GetSecondAnswer();
 }
