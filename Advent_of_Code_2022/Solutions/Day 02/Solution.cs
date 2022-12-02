@@ -8,7 +8,11 @@ public class Solution: ISolution
         return input.Split('\n')
             .Where(line => !line.Equals(""))
             .Select(line => line.Split(' '))
-            .Select(hands => (myHand: OptionsMap[hands[1]], theirHand: OptionsMap[hands[0]]));
+            .Select(items => new [] {items[0][0], items[1][0]})
+            .Select(hands => (
+                myHand: (PlayOption) (hands[1] - 'X' + 1), 
+                theirHand: (PlayOption) (hands[0] - 'A' + 1))
+            );
     }
     
     public static IEnumerable<(PlayOption theirHand, Outcome outcome)> ParseInputPartTwo(string input)
@@ -16,53 +20,22 @@ public class Solution: ISolution
         return input.Split('\n')
             .Where(line => !line.Equals(""))
             .Select(line => line.Split(' '))
-            .Select(hands => (theirHand: OptionsMap[hands[0]], outcome: OutcomeMap[hands[1]]));
+            .Select(items => new [] {items[0][0], items[1][0]})
+            .Select(hands => (
+                theirHand: (PlayOption) (hands[0] - 'A' + 1), 
+                outcome: (Outcome) ((hands[1] - 'X') * 3))
+            );
     }
 
     public enum PlayOption
     {
-        Rock,
-        Paper,
-        Scissors
+        Rock = 1, Paper = 2, Scissors = 3
     }
-    
-    private static readonly Dictionary<string, PlayOption> OptionsMap = new()
-    {
-        { "A", PlayOption.Rock },
-        { "B", PlayOption.Paper },
-        { "C", PlayOption.Scissors },
-        { "X", PlayOption.Rock },
-        { "Y", PlayOption.Paper },
-        { "Z", PlayOption.Scissors },
-    };
-
-    private static readonly Dictionary<PlayOption, int> PlayOptionScore = new()
-    {
-        {PlayOption.Rock, 1},
-        {PlayOption.Paper, 2},
-        {PlayOption.Scissors, 3}
-    };
 
     public enum Outcome
     {
-        Win,
-        Lose,
-        Draw
+        Win = 6, Draw = 3, Lose = 0
     }
-    private static readonly Dictionary<string, Outcome> OutcomeMap = new()
-    {
-        { "X", Outcome.Lose },
-        { "Y", Outcome.Draw },
-        { "Z", Outcome.Win }
-    };
-
-    private static readonly Dictionary<Outcome, int> OutcomeScore = new()
-    {
-        { Outcome.Lose, 0},
-        { Outcome.Draw, 3},
-        { Outcome.Win, 6},
-    };
-
 
     public static Outcome OutcomeForMatch(PlayOption myHand, PlayOption theirHand)
     {
@@ -72,8 +45,7 @@ public class Solution: ISolution
         {
             PlayOption.Rock => theirHand == PlayOption.Scissors ? Outcome.Win : Outcome.Lose,
             PlayOption.Paper => theirHand == PlayOption.Rock ? Outcome.Win : Outcome.Lose,
-            PlayOption.Scissors => theirHand == PlayOption.Paper ? Outcome.Win : Outcome.Lose,
-            _ => throw new ArgumentOutOfRangeException(nameof(myHand), myHand, null)
+            PlayOption.Scissors => theirHand == PlayOption.Paper ? Outcome.Win : Outcome.Lose
         };
     }
 
@@ -86,41 +58,32 @@ public class Solution: ISolution
             {
                 PlayOption.Rock => PlayOption.Scissors,
                 PlayOption.Paper => PlayOption.Rock,
-                PlayOption.Scissors => PlayOption.Paper,
-                _ => throw new ArgumentOutOfRangeException(nameof(theirHand), theirHand, null)
+                PlayOption.Scissors => PlayOption.Paper
             },
             Outcome.Win => theirHand switch
             {
                 PlayOption.Rock => PlayOption.Paper,
                 PlayOption.Paper => PlayOption.Scissors,
-                PlayOption.Scissors => PlayOption.Rock,
-                _ => throw new ArgumentOutOfRangeException(nameof(theirHand), theirHand, null)
-            },
-            _ => throw new ArgumentOutOfRangeException(nameof(outcome), outcome, null)
+                PlayOption.Scissors => PlayOption.Rock
+            }
         };
     }
 
     public string GetFirstAnswer()
     {
-        var parsedInput = ParseInputPartOne(File.ReadAllText("Solutions/Day 02/input.txt"));
-
-        var score = parsedInput
+        return ParseInputPartOne(File.ReadAllText("Solutions/Day 02/input.txt"))
             .Select(hands => (myHand: hands.myHand, outcome: OutcomeForMatch(hands.myHand, hands.theirHand)))
-            .Select(match => OutcomeScore[match.outcome] + PlayOptionScore[match.myHand])
-            .Sum();
-        
-        return score.ToString();
+            .Select(match => (int) match.outcome + (int) match.myHand)
+            .Sum()
+            .ToString();
     }
 
     public string GetSecondAnswer()
     {
-        var parsedInput = ParseInputPartTwo(File.ReadAllText("Solutions/Day 02/input.txt"));
-        
-        var score = parsedInput
-            .Select(hands => (myHand: PlayOptionForMatch(hands.theirHand, hands.outcome), outcome: hands.outcome))
-            .Select(match => OutcomeScore[match.outcome] + PlayOptionScore[match.myHand])
-            .Sum();
-        
-        return score.ToString();
+        return ParseInputPartTwo(File.ReadAllText("Solutions/Day 02/input.txt"))
+            .Select(handAndOutcome => (myHand: PlayOptionForMatch(handAndOutcome.theirHand, handAndOutcome.outcome), outcome: handAndOutcome.outcome))
+            .Select(match => (int) match.outcome + (int) match.myHand)
+            .Sum()
+            .ToString();
     }
 }
