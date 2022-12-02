@@ -7,11 +7,10 @@ public class Solution: ISolution
     {
         return input.Split('\n')
             .Where(line => !line.Equals(""))
-            .Select(line => line.Split(' '))
-            .Select(items => new [] {items[0][0], items[1][0]})
-            .Select(hands => (
-                myHand: (PlayOption) (hands[1] - 'X' + 1), 
-                theirHand: (PlayOption) (hands[0] - 'A' + 1))
+            .Select(line => line.ToCharArray())
+            .Select(chars => (
+                myHand: (PlayOption) (chars[2] - 'X' + 1), 
+                theirHand: (PlayOption) (chars[0] - 'A' + 1))
             );
     }
     
@@ -19,11 +18,10 @@ public class Solution: ISolution
     {
         return input.Split('\n')
             .Where(line => !line.Equals(""))
-            .Select(line => line.Split(' '))
-            .Select(items => new [] {items[0][0], items[1][0]})
-            .Select(hands => (
-                theirHand: (PlayOption) (hands[0] - 'A' + 1), 
-                outcome: (Outcome) ((hands[1] - 'X') * 3))
+            .Select(line => line.ToCharArray())
+            .Select(chars => (
+                theirHand: (PlayOption) (chars[0] - 'A' + 1), 
+                outcome: (Outcome) ((chars[2] - 'X') * 3))
             );
     }
 
