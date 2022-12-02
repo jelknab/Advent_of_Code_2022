@@ -7,7 +7,6 @@ public class Solution: ISolution
     {
         return input.Split('\n')
             .Where(line => !line.Equals(""))
-            .Select(line => line.ToCharArray())
             .Select(chars => (
                 myHand: (PlayOption) (chars[2] - 'X' + 1), 
                 theirHand: (PlayOption) (chars[0] - 'A' + 1))
@@ -18,7 +17,6 @@ public class Solution: ISolution
     {
         return input.Split('\n')
             .Where(line => !line.Equals(""))
-            .Select(line => line.ToCharArray())
             .Select(chars => (
                 theirHand: (PlayOption) (chars[0] - 'A' + 1), 
                 outcome: (Outcome) ((chars[2] - 'X') * 3))
