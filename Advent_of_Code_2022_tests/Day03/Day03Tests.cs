@@ -1,4 +1,5 @@
-﻿using Advent_of_Code_2022.Solutions.Day_03;
+﻿using Advent_of_Code_2022;
+using Advent_of_Code_2022.Solutions.Day_03;
 
 namespace Advent_of_Code_2022_tests.Day03;
 
@@ -52,7 +53,7 @@ public class Day03Tests
     {
         var parsedInput = Solution.ParseInput(File.ReadAllText("Day03/test.input.txt")).ToList();
 
-        var groups = Solution.GroupBackpacksBy3(parsedInput).ToArray();
+        var groups = parsedInput.Batch(3).Select(backpack => backpack.ToArray()).ToArray();
 
         var expectedGroups = new[]
         {
@@ -67,7 +68,8 @@ public class Day03Tests
     public void FindsMatchingItems()
     {
         var parsedInput = Solution.ParseInput(File.ReadAllText("Day03/test.input.txt")).ToList();
-        var badges = Solution.GroupBackpacksBy3(parsedInput)
+        var badges = parsedInput
+            .Batch(3)
             .Select(backpacks => Solution.FindItemsInAllBackpacks(backpacks).ToArray())
             .ToArray();
         

@@ -31,28 +31,6 @@ public class Solution: ISolution
             .Sum();
     }
 
-    public static IEnumerable<string[]> GroupBackpacksBy3(IEnumerable<string> backpacks)
-    {
-        using var enumerator = backpacks.GetEnumerator();
-        {
-            while (enumerator.MoveNext())
-            {
-                var items = new string[3];
-
-                for (var i = 0; i < 3; i++)
-                {
-                    items[i] = enumerator.Current;
-                    if (i != 2)
-                    {
-                        enumerator.MoveNext();
-                    }
-                }
-
-                yield return items;
-            }
-        }
-    }
-
     public string GetFirstAnswer()
     {
         return ParseInput(File.ReadAllText("Solutions/Day 03/input.txt"))
@@ -65,7 +43,8 @@ public class Solution: ISolution
 
     public string GetSecondAnswer()
     {
-        return GroupBackpacksBy3(ParseInput(File.ReadAllText("Solutions/Day 03/input.txt")))
+        return ParseInput(File.ReadAllText("Solutions/Day 03/input.txt"))
+            .Batch(3)
             .Select(FindItemsInAllBackpacks)
             .Select(GetItemsPriorityScore)
             .Sum()
