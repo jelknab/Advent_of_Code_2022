@@ -4,7 +4,7 @@ using Advent_of_Code_2022.Solutions.Day_05;
 public class Day05Tests
 {
     [Fact]
-    void ExpectedOutcome()
+    void ExpectedOutcome9000()
     {
         var parsedInput = Solution.ParseInput(File.ReadAllText("Day05/test.input.txt"));
 

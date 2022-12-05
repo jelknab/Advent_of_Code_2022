@@ -13,30 +13,28 @@ public class Solution: ISolution
         var lines = input.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None).ToArray();
 
         var indicesLine = lines.Select((line, index) => (line, index)).First(line => CrateStackIndicesRegex.Match(line.line).Success);
-        
         var indicesCount = indicesLine.line.Replace(" ", "").Length;
-        var commands = CommandRegex.Matches(input).Select(match => (
-            int.Parse(match.Groups["amount"].Value), 
-            int.Parse(match.Groups["from"].Value) - 1, 
-            int.Parse(match.Groups["to"].Value) - 1
-        )).ToArray();
-
-        var crateStacks = Enumerable.Range(0, indicesCount).Select(_ => new Stack<char>()).ToArray();
-        foreach (var crateInput in lines.Take(indicesLine.index))
+        var crateStacks = Enumerable.Range(0, indicesCount).Select(_ => ImmutableStack.Create<char>()).ToArray();
+        
+        foreach (var crateInput in lines.Take(indicesLine.index).Reverse())
         {
             for (var index = 0; index < indicesCount; index++)
             {
                 var crate = crateInput[ 1 + index * 4];
                 if (crate != ' ')
                 {
-                    crateStacks[index].Push(crate);
+                    crateStacks[index] = crateStacks[index].Push(crate);
                 }
             }
         }
-                
+        
+        var commands = CommandRegex.Matches(input).Select(match => (
+            int.Parse(match.Groups["amount"].Value), 
+            int.Parse(match.Groups["from"].Value) - 1, 
+            int.Parse(match.Groups["to"].Value) - 1
+        )).ToArray();
 
-        var immutableStacks = crateStacks.Select(stack => ImmutableStack.Create(stack.ToArray())).ToArray();
-        return (ImmutableArray.Create(immutableStacks), commands);
+        return (ImmutableArray.Create(crateStacks.ToArray()), commands);
     }
     
     public static ImmutableArray<ImmutableStack<char>> ExecuteMoveCommand9000(ImmutableArray<ImmutableStack<char>> stacks, int amount, int fromIndex, int toIndex)
