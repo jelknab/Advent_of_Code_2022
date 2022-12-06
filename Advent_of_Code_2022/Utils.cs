@@ -20,12 +20,10 @@ public static class Utils
             {
                 itemsArray[i] = enumerator.Current;
             }
+            
+            yield return itemsArray;
 
-            if (i == windowSize)
-            {
-                yield return itemsArray;
-            }
-            else
+            if (i != windowSize) // We were able to get a single window
             {
                 yield break;
             }
