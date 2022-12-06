@@ -15,18 +15,27 @@ public static class Utils
         var itemsArray = new T[windowSize];
         using var enumerator = items.GetEnumerator();
         {
-            for (var i = 0; i < windowSize && enumerator.MoveNext(); i++)
+            var i = 0;
+            for (; i < windowSize && enumerator.MoveNext(); i++)
             {
                 itemsArray[i] = enumerator.Current;
             }
 
-            while (enumerator.MoveNext())
+            if (i == windowSize)
             {
                 yield return itemsArray;
-                var copy = new T[windowSize];
-                Array.Copy(itemsArray, 1, copy, 0, windowSize - 1);
-                copy[windowSize - 1] = enumerator.Current;
-                itemsArray = copy;
+            }
+            else
+            {
+                yield break;
+            }
+
+            while (enumerator.MoveNext())
+            {
+                Array.Copy(itemsArray, 1, itemsArray, 0, windowSize - 1);
+                itemsArray[windowSize - 1] = enumerator.Current;
+                
+                yield return itemsArray;
             }
         }
     }
