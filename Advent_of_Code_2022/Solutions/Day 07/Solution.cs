@@ -1,19 +1,13 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace Advent_of_Code_2022.Solutions.Day_07;
+﻿namespace Advent_of_Code_2022.Solutions.Day_07;
 
 public class AocFile
 {
-
-    public string Name { get; set; }
-    public long Size { get; set; }
+    public long Size { get; init; }
 }
 
 public class AocDirectory
 {
-    public string Name { get; set; }
-    
-    public AocDirectory Parent { get; set; }
+    public AocDirectory? Parent { get; init; }
     public Dictionary<string, AocFile> Files { get; } = new();
     public Dictionary<string, AocDirectory> Directories { get; } = new();
 
@@ -46,7 +40,7 @@ public class AocDirectory
 public class AocTerminal
 {
     public readonly AocDirectory Root = new();
-    public AocDirectory ActiveDirectory { get; set; }
+    private AocDirectory ActiveDirectory { get; set; }
 
     public AocTerminal()
     {
@@ -60,7 +54,7 @@ public class AocTerminal
             case "cd":
                 if (args[2].Equals(".."))
                 {
-                    ActiveDirectory = ActiveDirectory.Parent;
+                    ActiveDirectory = ActiveDirectory.Parent!;
                     return lineEnumerator.MoveNext();
                 }
                 
@@ -75,11 +69,11 @@ public class AocTerminal
                             
                     if (splitContent[0].Equals("dir"))
                     {
-                        ActiveDirectory.Directories.Add(splitContent[1], new AocDirectory {Name = splitContent[1], Parent = ActiveDirectory});
+                        ActiveDirectory.Directories.Add(splitContent[1], new AocDirectory {Parent = ActiveDirectory});
                         continue;
                     }
                     
-                    ActiveDirectory.Files.Add(splitContent[1], new AocFile {Size = long.Parse(splitContent[0]), Name = splitContent[1]});
+                    ActiveDirectory.Files.Add(splitContent[1], new AocFile {Size = long.Parse(splitContent[0])});
                 }
 
                 return true;
